@@ -2,7 +2,6 @@ const wrapper = document.querySelector(".carousel-container");
 const carousel = document.querySelector(".carousel");
 const firstCardWidth = carousel.querySelector(".carousel-card").offsetWidth;
 let carouselChildrens = [...carousel.children];
-console.log(firstCardWidth);
 
 let isDragging = false, isAutoPlay = true, startX, startScrollLeft, timeoutId;
 
@@ -56,24 +55,31 @@ const dragStart = (e) => {
   isDragging = true;
   carousel.classList.add("dragging");
   // Records the initial cursor and scroll position of the carousel
-  startX = e.pageX;
+  // startX = e.pageX;
+  startX = e.pageX || e.touches[0].clientX;
   startScrollLeft = carousel.scrollLeft;
+  console.log("Drag start:", startX, startScrollLeft);
 }
 
 const dragging = (e) => {
   if (!isDragging) return; // if isDragging is false return from here
   // Updates the scroll position of the carousel based on the cursor movement
-  const deltaX = startX - e.pageX;
+  // const deltaX = startX - e.pageX;
   // Check if the movement is significant enough to be considered a drag
-  if (Math.abs(deltaX) > 10) { // Adjust the threshold as needed
-    carousel.scrollLeft = startScrollLeft + deltaX;
-  }
-  carousel.scrollLeft = startScrollLeft - (e.pageX - startX);
+  // if (Math.abs(deltaX) > 10) { // Adjust the threshold as needed
+  //   carousel.scrollLeft = startScrollLeft + deltaX;
+  // }
+  // carousel.scrollLeft = startScrollLeft - (e.pageX - startX);
+  const x = e.pageX || e.touches[0].pageX;
+  const walk = x - startX;
+  carousel.scrollLeft = startScrollLeft - walk;
+  console.log("Dragging:", x, walk, carousel.scrollLeft);
 }
 
 const dragStop = () => {
   isDragging = false;
   carousel.classList.remove("dragging");
+  console.log("Drag stop");
 }
 
 const infiniteScroll = () => {
@@ -118,11 +124,13 @@ carousel.addEventListener("mousedown", dragStart);
 carousel.addEventListener("touchstart", dragStart);
 carousel.addEventListener("mousemove", dragging);
 carousel.addEventListener("touchmove", dragging);
-document.addEventListener("mouseup", dragStop);
-document.addEventListener("touchend", dragStop);
+carousel.addEventListener("mouseup", dragStop);
+carousel.addEventListener("mouseleave", dragStop);
+carousel.addEventListener("touchend", dragStop);
 carousel.addEventListener("scroll", infiniteScroll);
 wrapper.addEventListener("mouseenter", () => clearTimeout(timeoutId));
 wrapper.addEventListener("mouseleave", autoPlay);
 
-
-
+// Prevent default behavior to avoid scrolling the entire page while dragging
+carousel.addEventListener("touchstart", (e) => e.preventDefault());
+carousel.addEventListener("touchmove", (e) => e.preventDefault());
