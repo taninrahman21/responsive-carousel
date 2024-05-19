@@ -107,14 +107,22 @@ const autoPlay = () => {
 }
 autoPlay();
 
+// carousel.addEventListener("mousedown", dragStart);
+// carousel.addEventListener("mousemove", dragging);
+// document.addEventListener("mouseup", dragStop);
+// carousel.addEventListener("scroll", infiniteScroll);
+// wrapper.addEventListener("mouseenter", () => clearTimeout(timeoutId));
+// wrapper.addEventListener("mouseleave", autoPlay);
+
 carousel.addEventListener("mousedown", dragStart);
+carousel.addEventListener("touchstart", dragStart);
 carousel.addEventListener("mousemove", dragging);
+carousel.addEventListener("touchmove", dragging);
 document.addEventListener("mouseup", dragStop);
+document.addEventListener("touchend", dragStop);
 carousel.addEventListener("scroll", infiniteScroll);
 wrapper.addEventListener("mouseenter", () => clearTimeout(timeoutId));
 wrapper.addEventListener("mouseleave", autoPlay);
-
-
 
 
 
