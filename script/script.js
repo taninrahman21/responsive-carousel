@@ -54,13 +54,22 @@ updateActiveItem();
 const dragStart = (e) => {
   isDragging = true;
   carousel.classList.add("dragging");
+  // Records the initial cursor and scroll position of the carousel
+  // startX = e.pageX;
   startX = e.pageX || e.touches[0].clientX;
   startScrollLeft = carousel.scrollLeft;
   console.log("Drag start:", startX, startScrollLeft);
 }
 
 const dragging = (e) => {
-  if (!isDragging) return;
+  if (!isDragging) return; // if isDragging is false return from here
+  // Updates the scroll position of the carousel based on the cursor movement
+  // const deltaX = startX - e.pageX;
+  // Check if the movement is significant enough to be considered a drag
+  // if (Math.abs(deltaX) > 10) { // Adjust the threshold as needed
+  //   carousel.scrollLeft = startScrollLeft + deltaX;
+  // }
+  // carousel.scrollLeft = startScrollLeft - (e.pageX - startX);
   const x = e.pageX || e.touches[0].pageX;
   const walk = x - startX;
   carousel.scrollLeft = startScrollLeft - walk;
@@ -98,16 +107,18 @@ const infiniteScroll = () => {
 
 
 const autoPlay = () => {
-  // if (window.innerWidth < 800 || !isAutoPlay) return;
+  if (window.innerWidth < 800 || !isAutoPlay) return; // Return if window is smaller than 800 or isAutoPlay is false
   // Autoplay the carousel after every 2500 ms
-  timeoutId = setTimeout(() => {
-    const totalScrollLeft = firstCardWidth + 100;
-    carousel.scrollLeft += totalScrollLeft
-  }, 2500);
+  timeoutId = setTimeout(() => carousel.scrollLeft += firstCardWidth, 2500);
 }
 autoPlay();
 
-
+// carousel.addEventListener("mousedown", dragStart);
+// carousel.addEventListener("mousemove", dragging);
+// document.addEventListener("mouseup", dragStop);
+// carousel.addEventListener("scroll", infiniteScroll);
+// wrapper.addEventListener("mouseenter", () => clearTimeout(timeoutId));
+// wrapper.addEventListener("mouseleave", autoPlay);
 
 carousel.addEventListener("mousedown", dragStart);
 carousel.addEventListener("touchstart", dragStart);

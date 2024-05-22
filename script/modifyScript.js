@@ -1,9 +1,11 @@
 const wrapper = document.querySelector(".carousel-container");
 const carousel = document.querySelector(".carousel");
+const indicatorContainer = document.querySelector(".carousel-indicators");
 const firstCardWidth = carousel.querySelector(".carousel-card").offsetWidth;
 let isDragging = false, isAutoPlay = true, startX, startScrollLeft, timeoutId;
 
 const getCardPerView = () => Math.round(carousel.offsetWidth / firstCardWidth);
+
 
 const updateActiveItem = () => {
   const middleIndex = Math.floor((carousel.scrollLeft + carousel.offsetWidth / 2) / firstCardWidth);
@@ -12,6 +14,26 @@ const updateActiveItem = () => {
     if (index === middleIndex) card.classList.add('active');
     else if (index < middleIndex) card.classList.add('left-side');
     else card.classList.add('right-side');
+  });
+};
+
+const createIndicators = () => {
+  const numItems = carousel.children.length / 3; // Divide by 3 to consider original items only
+  const indicatorsHTML = Array.from({ length: numItems }, (_, index) => `
+        <div class="carousel-indicator" data-index="${index}"></div>
+    `).join('');
+  indicatorContainer.innerHTML = indicatorsHTML;
+};
+
+const updateIndicators = () => {
+  const activeIndex = Math.floor((carousel.scrollLeft + firstCardWidth / 2) / firstCardWidth);
+  const indicators = indicatorContainer.querySelectorAll('.carousel-indicator');
+  indicators.forEach((indicator, index) => {
+    if (index === activeIndex) {
+      indicator.classList.add('active');
+    } else {
+      indicator.classList.remove('active');
+    }
   });
 };
 
@@ -27,6 +49,7 @@ const insertClones = () => {
 };
 
 const initializeCarousel = () => {
+  createIndicators();
   insertClones();
   carousel.classList.add("no-transition");
   carousel.scrollLeft = carousel.offsetWidth;
@@ -47,6 +70,7 @@ const dragging = (e) => {
   const x = e.pageX || e.touches[0].clientX;
   const walk = x - startX;
   carousel.scrollLeft = startScrollLeft - walk;
+  updateIndicators();
 };
 
 const dragStop = () => {
@@ -65,6 +89,7 @@ const infiniteScroll = () => {
     carousel.classList.remove("no-transition");
   }
   updateActiveItem();
+  updateIndicators();
   clearTimeout(timeoutId);
   if (!wrapper.matches(":hover")) autoPlay();
 };
@@ -75,6 +100,7 @@ const autoPlay = () => {
     carousel.scrollLeft += firstCardWidth;
   }, 2500);
 };
+
 
 
 carousel.addEventListener("mousedown", dragStart);
